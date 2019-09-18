@@ -71,7 +71,7 @@ In UL transmission, there are the cases that an UL transmission at the eMBB UE h
 
 \subsection{GB eMBB and CG URLLC multiplexing}\label{IIB}
 \subsubsection{Problem formulation}\label{IIB1}
-As mentioned in Section \ref{I}, CG resources is one option for URLLC transmission to reduce transmission and processing time of SR and UL grant. However, the gNB does not have information of the arrival of packets at the UE side. Therefore, there is the case that the UE does not use the CG resources because it has no arriving data to transmit and those resources would be wasted. It is harmful to the network if the cell is loaded with many active UEs (eMBB and URLLC UEs). In that scenario as in Fig.~\ref{fig1}, the gNB dynamically schedules some of the eMBB UEs to use the CG resources overlapping with other URLLC UEs.
+As mentioned in Section \ref{I}, CG resources is one option for URLLC transmission to reduce transmission and processing time of SR and UL grant. However, the gNB does not have information of the arrival of packets at the UE side. Therefore, there is the case that the UE does not use the CG resources because it has no arriving data to transmit and those resources would be wasted. It is harmful to the network if it has many active UEs (eMBB and URLLC UEs). In that scenario as in Fig.~\ref{fig1}, the gNB dynamically schedules some of the eMBB UEs to use the CG resources overlapping with other URLLC UEs.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.32]{fig1.PNG}}
@@ -83,7 +83,7 @@ Thanks to the multiplexing of the eMBB UEs into the CG resources, the system att
 
 The situation in eMBB and URLLC collision becomes more severe due to timer-based HARQ feedback structure in the UL transmission. In timer-based HARQ feedback structure, when the UE transmits a packet, it starts its timer. If the gNB can detect the presence of the packet by DMRS but fails to decode the packet, it sends an UL grant to the UE to schedule a retransmission. If the UE does not receive UL grant in the pre-configured time of the timer, it assumes that the transmission of that transport block (TB) is successful. However, this assumption might cause packet loss when the gNB cannot detect the presence of the packet transmitted through DMRS (DMRS miss-detection) and does not send UL grant to the UE. 
 
-Timer-based HARQ feedback is used because it reduces overhead due to sending acknowledgement (ACK) HARQ feedback. It is appropriate in the URLLC transmission with high reliability when there is no interference. But in case of eMBB and URLLC multiplexing, the degradation of signal causes a higher probability of DMRS miss-detection. Packet loss occurs more often because of the UE's false assumption. It leads to a disastrous consequence for URLLC transmission.
+Timer-based HARQ feedback is used in URLLC transmission because it reduces overhead due to sending acknowledgement (ACK) HARQ feedback. It is appropriate in the URLLC transmission with high reliability when there is no interference. But in case of eMBB and URLLC multiplexing, the degradation of signal causes a higher probability of DMRS miss-detection so packet loss occurs more often because of the UE's false assumption in timer-based feedback structure. It causes a disastrous consequence for URLLC transmission.
 
 \subsubsection{Prior art} \label{IIBN}
 
@@ -134,7 +134,7 @@ retransmit in the subsequent CG resources or SR\\
 
 We proposed in \cite{ad99} a two-step strategy to deal with the degradation of URLLC transmission in multiplexing with eMBB transmission due to DMRS miss-detection.
 
-In the first step, an overlap indication is utilized. When the gNB dynamically schedules the CG resources to the eMBB UEs, the gNB also sends simultaneously the overlap indication to the URLLC UEs that are pre-configured in those CG resources. The gNB does not have prior information about the UEs that will transmit data at the duration of the eMBB transmission so it transmits the overlap indication as a group common signal to the targeted URLLC UEs as shown in Fig.~\ref{fig2}. This overlap indication informs the URLLC UEs about the appearance of the eMBB transmission in the CG resources. Thus, if they want to transmit, they need to do some acts to counter the increasing interference and achieve reliability requirement.
+In the first step, an overlap indication is utilized. When the gNB dynamically schedules the CG resources to the eMBB UEs, it also sends simultaneously the overlap indication to the URLLC UEs that are pre-configured in those CG resources. The gNB does not have prior information about the UEs that will transmit data at the duration of the eMBB transmission so it transmits the overlap indication as a group common signal to all targeted URLLC UEs as shown in Fig.~\ref{fig2}. This overlap indication informs the URLLC UEs about the appearance of the eMBB transmission in the CG resources. Thus, if they want to transmit, they need to do some acts to counter the increasing interference and achieve reliability requirement.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.32]{fig2.PNG}}
@@ -145,9 +145,9 @@ In the first step, an overlap indication is utilized. When the gNB dynamically s
 
 After the URLLC UEs receive the overlap indication, the second step of the strategy starts. Thanks to the overlap indication, the URLLC UEs know about the interference and activate the explicit HARQ ACK feedback structure to replace the conventional timer-based structure. This activation can be signalled by 1-bit flag in the overlap indication. 
 
-In this feedback structure, the UEs would expect to receive an ACK feedback from the gNB if data is decoded correctly at the gNB. On the other hand, if the gNB only can identify the packet by DMRS detection but cannot decode it, the UE will receive an UL grant. In the third case, if the gNB even cannot identify the packet through DMRS sequence, the explicit feedback structure becomes useful and helps to avoid packet loss. The UE will not receive ACK or UL grant from the gNB but it does not assume a successful transmission and drops data as the conventional structure. In contrast, due to a lack of feedback, the UE realizes that the gNB failed to identify its identity (ID) because of the interference between eMBB and URLLC transmission. Subsequently, the UE retransmits automatically the packet in the next available CG resources. 
+In this feedback structure, the UEs would be sent an ACK feedback by the gNB if data is decoded correctly at the gNB. On the other hand, if the gNB only can identify the packet by DMRS detection but cannot decode it, the UE will receive an UL grant. In the third case, if the gNB cannot identify the packet through DMRS sequence, the explicit feedback structure will help the gNB and the UE avoid packet loss. The UE does not receive ACK or UL grant from the gNB but it does not assume a successful transmission and drops data as the conventional structure. In contrast, due to a lack of feedback, the UE realizes that the gNB failed to identify its identity (ID) because of the interference between eMBB and URLLC transmission. Subsequently, the UE retransmits automatically the packet in the next available CG resources. 
 
-Behaviors of the gNB and UE in two feedback structures are summarized in Table~\ref{tab1}.
+Behaviors of the gNB and UE in two feedback structures are described in Table~\ref{tab1}.
 
 \begin{table}[htbp]
 \caption{Comparison of two feedback structures}
@@ -172,7 +172,7 @@ DMRS: failed&gNB: transmits no ACK/UL grant&gNB: transmits no ACK/UL grant\\ &UE
 \vspace{-5mm}
 \end{table}
 
-Time in the timer can be configured by radio resource control (RRC) to define how long the UE must wait for ACK or UL grant before retransmiting the packet based on reliability and latency requirements.
+%Time in the timer can be configured by radio resource control (RRC) to define how long the UE must wait for ACK or UL grant before retransmiting the packet based on reliability and latency requirements.
 
 \subsubsection{Overlap indication and an additional SR}\label{IIB3}
 
@@ -181,11 +181,9 @@ An alternative technique proposed in \cite{ad99} to avoid packet loss due to DMR
 
 The first step is similar to the technique mentioned in Section \ref{IIB2}. An overlap indication is sent by the gNB to the URLLC UEs to inform the dynamic schedule of eMBB transmission in the CG regions.
 
-In the second step, the overlap indication activates the URLLC UEs by 1-bit flag included in the signal to transmit an additional SR at the same time that they transmit their TBs. This SR gives the gNB another chance to identify UE ID. Indeed, if the gNB fails to detect DMRS sequence in the TB, it still can recognize the presence of the TB by decoding SR. Based on the UE ID in SR, the gNB can transmit an UL grant to reschedule a retransmission.
+In the second step, the overlap indication activates the URLLC UEs by 1-bit flag included in the signal to transmit an additional SR at the same time that they transmit their TBs. This SR gives the gNB another chance to identify UE ID. Indeed, if the gNB fails to detect DMRS sequence in the TB, it still can recognize the presence of the TB by decoding SR. Based on the UE ID in SR, the gNB can transmit an UL grant to reschedule a retransmission. Behaviors of the gNB and UE with the additional SR are explained in Table~\ref{tab2}.
 
-SR is proposed to be transmitted in the dedicated PUCCH resources separated from PUSCH as illustrated in Fig.~\ref{fig3}. This scheme reduces the corruption of both DMRS detection and SR decoding because of the interference in PUSCH.
-
-Behaviors of the gNB and UE with the additional SR are summarized in Table~\ref{tab2}.
+In this scheme, the UE sends the additional SR in the dedicated PUCCH resources as illustrated in Fig.~\ref{fig3} to reduce the corruption of both DMRS detection and SR decoding because of the interference in PUSCH.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.33]{fig3.PNG}}
@@ -266,7 +264,7 @@ The second step using explicit ACK feedback in Section \ref{IIB2} and the second
 
 As mentioned above, DMRS detection plays an important role in decoding and rescheduling a TB so DMRS detection performance is simulated with parameters in Table~\ref{tab5}. The simulation is done with 3 scenarios. The first scenario is when only the URLLC UE transmits data and the gNB detects DMRS sequence without any interference. The second scenario is when both the eMBB and URLLC UEs transmit in the same resource. The gNB suffers from interference when detecting DMRS sequence from the URLLC UE. The third scenario is that the URLLC UE is informed about the collision with another eMBB UE and increases power level by 1dB compared to the normal power level in case of no collision.
 
-The gNB detects DMRS sequence by doing correlation between the received signal and the prior known sequence. The result is compared with a threshold. This threshold is chosen based on a target of false alarm rate (FAR). A false alarm happens when the gNB detects a DMRS sequence while no actual DMRS sequence is transmitted. DMRS detection's performance is shown in Fig.~\ref{fig16}.
+The gNB detects DMRS sequence by doing correlation between the received signal and the prior known sequence. The result is compared with a threshold selected based on a false alarm rate (FAR). A false alarm happens when the gNB detects a DMRS sequence whereas no actual DMRS sequence is sent. DMRS detection's performance is shown in Fig.~\ref{fig16}.
 
 Table~\ref{tab10} shows the performance of DMRS performance at the gNB at SNR of -1.4dB, FAR of 0.001. In the conventional timer-based feedback, a DMRS miss-detection leads to a packet loss. BLER ($ P^{e}_{1}$) of the conventional timer-based feedback transmission (including the scheme of increasing power level) is 
 
@@ -289,7 +287,7 @@ When the explicit HARQ feedback structure is activated, the error probability ($
 \end{split}
 \end{equation}
 
-$ P^{e}_{2}$ is smaller than $ P^{e}_{1}$ because the UE retransmits automatically data if it receives no ACK or UL grant as shown in the first terms of \eqref{eq10} and \eqref{eq11}. As can be seen, the first term $P^{e}_{DMRS1}(P^{e}_{DMRS2} + (1-P^{e}_{DMRS2})P^{e}_{d2})$ of \eqref{eq11} is smaller than the first term $P^{e}_{DMRS1}$ of \eqref{eq10} because the gNB has another chance to decode the packet if it missed DMRS sequence in the intial transmission. The numerical result in the final column of Table~\ref{tab10} shows the improvement of the DMRS miss-detection by using explicit feedback structure.
+$ P^{e}_{2}$ is smaller than $ P^{e}_{1}$ because the UE retransmits automatically data if it receives no ACK or UL grant as shown in the first terms of \eqref{eq10} and \eqref{eq11}. The first term $P^{e}_{DMRS1}(P^{e}_{DMRS2} + (1-P^{e}_{DMRS2})P^{e}_{d2})$ of \eqref{eq11} is smaller than the first term $P^{e}_{DMRS1}$ of \eqref{eq10} because the gNB has another chance to decode the packet if it missed DMRS sequence in the intial transmission. The numerical result in the final column of Table~\ref{tab10} shows the improvement of the DMRS miss-detection by using explicit feedback structure.
 
 If the UE is activated to transmit an additional SR, the error probability ($ P^{e}_{3}$) is 
 
@@ -411,11 +409,11 @@ Due to high reliability requirements of CI, high Als are used for CI. Thus, when
 \section{Ensuring Latency and Reliability with UL Configured Grant transmissions}\label{III}
 \subsection{Problem formulation}
 
-In 3GPP Release 15, the gNB can configure the URLLC UEs with periodic resources to meet their strict QoS requirements. The goal is to reduce latency due to SR and UL grant transmission. Besides latency, reliability is another demand of URLLC transmission. Release 15 further enhances URLLC reliability by standardizing that the UEs can transmit automatically $K$ repetitions without waiting feedback from the gNB as configured by parameter $repK$ from higher layer. The values of $K$ are 1, 2, 4 and 8 \cite{ref6}.
+3GPP Release 15 enhances URLLC reliability and latency by standardizing that the UEs can transmit automatically $K$ repetitions without waiting feedback from the gNB in the CG resources as configured by parameter $repK$ from higher layer. The values of $K$ are 1, 2, 4 and 8 \cite{ref6}.
 
-The standard puts a constraint to the automatic repetitions of UL packets. The UEs are only allowed to carry out repetitions of a packet in an interval with periodicity $P$. The range of $P$ is from several symbols to several slots as standardized in \cite{ref6}. In case the UE reaches the boundary of an interval, it must stop the repetitions of the corresponding packet starting in that interval even if the number of repetitions have not reached $K$ repetitions. This constraint is to avoid a confusion of HARQ IDs of the repetitions in different HARQ process at the gNB. If the gNB misses the first transmission then the second and third transmissions have different IDs, the gNB will not know the ID of the original transmission to send an UL grant for a retransmission. Moreover, the gNB also cannot recognize the order of the repetitions to do soft combining in that scenario. 
+The standard puts a constraint to the automatic repetitions of UL packets. The UEs are only allowed to carry out repetitions of a packet in an interval with periodicity $P$. The range of $P$ is from several symbols to several slots as standardized in \cite{ref6}. In case the UE reaches the boundary of an interval, it must stop the repetitions of the corresponding packet starting in that interval even if the maximum number of repetitions have not been attained. This constraint is to avoid a confusion of HARQ IDs of the repetitions in different HARQ process at the gNB. If the gNB misses the first transmission then the second and third transmissions have different IDs, the gNB will not know the ID of the original transmission to send an UL grant for a retransmission. Moreover, the gNB also cannot recognize the order of the repetitions to do soft combining in that scenario. 
 
-Due to the constraint of interval boundary, the number of repetitions transmitted might be smaller than the configured number $K$ as shown in Fig.~\ref{fig4} where $K$ is configured to 4. An interval of a HARQ process with time length $P$ contains 4 CG occasions. For the first packet, it arrives at the beginning of an interval and before all 4 CG occasions so the UE can carry out 4 repetitions as configured for this packet. Nevertheless, the second packet comes after the first CG occasion, thus, the UE is only able to do 3 repetitions in the 3 CG occasions remaining instead of 4 repetitions as configured. The UE also can do only 2 repetitions of the third packet because it arrives in the middle of the interval. 
+Due to the constraint of interval boundary, the number of repetitions transmitted might be smaller than the configured number $K$ as shown in Fig.~\ref{fig4} where $K$ is configured to 4. An interval of a HARQ process with time length $P$ contains 4 CG occasions. For the first packet, it arrives at the beginning of an interval and before all 4 CG occasions so the UE can carry out 4 repetitions as configured. Nevertheless, the second and third packet comes after the first CG occasion, thus, the UE is only able to do 3 and 2 repetitions, respectively, instead of 4 repetitions as configured. 
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.33]{fig4.PNG}}
@@ -441,13 +439,13 @@ In \cite{ref7}, 3GPP agreed that multiple configurations are used to enhance rel
 
 In \cite{ref8} and \cite{ref9}, the repetitions are allowed to cross the boundary of a periodicity. It requires lots of effort in standardization to avoid the confusion between HARQ IDs at the gNB such as a mechanism to communicate HARQ IDs to the gNB or different DMRS sequences in the repetitions.
 
-In \cite{ref10} and \cite{ref11}, the UEs use shared resources for repetitions to achieve better resource utilization. However, the constraint of HARQ process boundary is not considered. Moreover, the size of all resources for repetitions are the same. They causes a degradation of reliability, latency and resource consumption.
+In \cite{ref10} and \cite{ref11}, the UEs transmits the repetitions in the shared resource. However, the constraint of HARQ process boundary is not considered. Moreover, the size of all resources for repetitions are the same. Both factors cause a degradation of reliability, latency and resource consumption.
 
 \subsection{Optimal reserved resources to ensure $K$ repetitions}\label{IIIB}
 
 \subsubsection {Reserved resources}
 
-The number of repetitions that have been configured in the system for CG transmissions can be guaranteed by making available some transmission resources which are dedicated for the CG transmissions in case the repetitions can not be completed within the classic resources as we propose in \cite{b9}. For CG transmission, each interval is associated with a HARQ process and that's why a TB is not allowed to cross the boundary of an interval. The reserved resources are configured with the same period as CG occasions. These reserved resources are shared shared among the UEs following random access or group access, resulting in lower overhead of resource creation. If the UE reaches the boundary of a HARQ process while not carrying out $K$ repetitions, it will use the reserved resources configured in the next transmission interval (reserved for a different HARQ process) to continue to transmit until attaining $K$ repetitions as shown in Fig.~\ref{fig5}. The UE1 only can do 3 repetitions in the first period but continues to transmit 1 repetition remaining in the first reserved resource of the next period instead of stopping the transmission. The gNB will search the reserved resources to find the repetitions. Because the reserved resources are configured by the gNB, it can distinguish the repetitions in the CG and reserved resources. Therefore, the gNB only uses HARQ ID of repetitions in the CG resource for UL grant for a retransmission.
+For CG transmission, each interval is associated with a HARQ process and that's why a TB is not allowed to cross the boundary of an interval. The configured number of repetitions can be guaranteed by generating some transmission resources which are dedicated for the CG transmissions in case the repetitions can not be completed within the classic resources as we propose in \cite{b9}. The reserved resources are configured with the same period as CG occasions. These reserved resources are shared shared among the UEs following random access or group access, resulting in lower overhead of resource creation. If the UE reaches the boundary of a HARQ process while not carrying out $K$ repetitions, it will use the reserved resources configured in the next transmission interval (reserved for a different HARQ process) to continue to transmit until attaining $K$ repetitions as shown in Fig.~\ref{fig5}. The UE1 only can do 3 repetitions in the first period but continues to transmit 1 repetition remaining in the first reserved resource of the next period instead of stopping the transmission. The gNB will search the reserved resources to find the repetitions. Because the reserved resources are configured by the gNB, it can distinguish the repetitions in the CG and reserved resources. Therefore, the gNB only uses HARQ ID of repetitions in the CG resource for UL grant for a retransmission.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.32]{fig5.PNG}}
@@ -465,7 +463,9 @@ The number of repetitions that have been configured in the system for CG transmi
 \vspace{-2mm}
 \end{figure}
 
-The system in Fig.~\ref{fig6} considered to calculate collision probability in the reserved resources contains $N$ UEs. These $N$ UEs are configured by the gNB to transmit in the periodical CG resources with the number of repetitions $K$ set by parameter $repK$. The UEs transmit the automatic repetitions of a packet in the consecutive CG resources. The CG resources in one frequency band can be shared among the UEs in a group. A period $P$ corresponding to a HARQ process consists of CG transmission occasions equal to the number of repetitions $K$. The results derived below are also valid if the number of CG transmission occasions in a period are bigger than $K$. The reserved resources ($K-1$ reserved resources) are configured periodically as CG resources in each period $P$. These resources are shared among the $N$ UEs to retransmit data in case the number of repetitions that they can carry out in one period are less than the configured one. Each reserved resource has size of $M_{i}$ blocks with index $i$ indicating that the reserved resource is at the $i$th transmission occasion of a period. The size of each block in the reserved resources is the same as that of the CG resource in one transmission occasion.
+
+
+In Fig.~\ref{fig6}, there are $N$ UEs configured to transmit $K$ repetitions in the contiguous CG resources. The CG resources in one frequency band can be shared among the UEs in a group. A HARQ process with time interval $P$ contains $K$ CG transmission occasions. The results derived below are also valid if the number of CG transmission occasions in an interval $P$ are bigger than $K$. $K-1$ reserved resources are configured with the same period as the CG resources in each period $P$. All $N$ UEs can use the reserved resources to attain the configured number of repetitions. Each reserved resource has size of $M_{i}$ blocks where each block has the size of CG resource in one transmission occasion with index $i$ indicating that the reserved resource is at the $i$th transmission occasion of a period. 
 
 The arrival of data for each UE follows a Poisson process with the average number of random access events in an interval $\lambda$ calculated from the period between the CG resources $T$ and an average packet inter-arrival time $\mu$: $\lambda$ = $T/\mu$.
 
@@ -577,7 +577,7 @@ The presence of SIC receiver reduces resource consumption of the reserved resour
 
 In case the PUSCH resources for UL transmission is scarce and the network is overloaded with the UEs, the gNB cannot configure reserved resources to guarantee both the number of repetitions and their reliability. The network faces the fact that the number of repetitions are impossible to be achieved as configured. The priority in this situation is to reduce the impact of the repetitions that are not transmitted to system's reliability. The schemes described Section in \ref{IIIC} and Section \ref{IIID} will attain this goal.
 
-When the gNB configures $K$ repetitions to an UL CG transmission, it calculates and sets up all parameter to make sure that the system achieves the target reliability in a channel condition. If the UEs transmits less than $K$ repetitions due to the constraint of interval boundary, it makes the system operate under target operation point. Thereby, error probability including DMRS miss-detection becomes bigger. Normally, if the gNB identifies a packet but cannot decode it, it can reschedule a retransmission. But if it misses DMRS of the packet, it cannot reschedule the packet. The packet is just be dropped by the UE because of timer-based feedback structure as explained in Section \ref{IIB1}. To avoid this outcome and improve reliability,  we propose in \cite{ad100} a strategy related to the activation of explicit HARQ ACK feedback structure as in \ref{IIB2}.
+When the gNB configures $K$ repetitions to an UL CG transmission, it calculates and sets up all parameter to make sure that the system achieves the target reliability in a channel condition. If the UEs transmits less than $K$ repetitions due to the constraint of interval boundary, it makes the system operate under target operation point. Thereby, error probability including DMRS miss-detection becomes bigger. Normally, if the gNB identifies a packet but cannot decode it, it can reschedule a retransmission. But if it misses DMRS of the packet, it cannot reschedule the packet. The packet is just dropped by the UE because of timer-based feedback structure as explained in Section \ref{IIB1}. To avoid this outcome and improve reliability, we propose in \cite{ad100} a strategy related to the activation of explicit HARQ ACK feedback structure as in Section \ref{IIB2}.
 
 When the UE transmits a packet less than $K$ repetitions, the explicit HARQ ACK feedback structure is activated for that packet. The UE expects ACK from the gNB in case of a successful transmission instead of no feedback. The gNB also recognizes the smaller number of repetitions received by counting the repetitions in the prior known interval with period $P$. Consequently, the gNB knows that an explicit feedback structure is used. It transmits ACK to the UE if it decodes correctly one of the repetitions of the concerned packet.
 
@@ -599,9 +599,7 @@ Both two strategies in \ref{IIIC} and \ref{IIID} can be activated at the same ti
 
 \subsubsection{Optimal reserved resources}
 \paragraph{No SIC receiver at the gNB}\label{IVB1}
-Based on \eqref{eq9}, with a set of parameters  $\lambda, K, i, M_{i}$ and $P_{ci}$, we can calculate the number of the UEs that share the reserved resources and still achieve the target probability.
-
-In the first scenario, the set of the parameters is: $M_1=10, K=4, \lambda=1.25\times10^{-4}, P_{c1}=10^{-3}$. This means that the UEs are configured to transmit 4 repetitions. The size of the first reserved resources is 10 blocks. The goal is to find the number of the UEs that the system can support with a collision probability in the reserved resource of 10\textsuperscript{-3}. The collision probability in terms of the number of the UEs sharing the reserved resources is illustrated in Fig.~\ref{fig12}. As can be seen in the graph, the system can support 28 UEs in the reserved resources.
+In the first scenario, the set of the parameters is: $M_1=10, K=4, \lambda=1.25\times10^{-4}, P_{c1}=10^{-3}$.  This means that the UEs are configured to transmit 4 repetitions. The size of the first reserved resources is 10 blocks. The goal is to find the number of the UEs that the system can support with a collision probability in the reserved resource of 10\textsuperscript{-3}. The collision probability in terms of the number of the UEs sharing the reserved resources is illustrated in Fig.~\ref{fig12}. As can be seen in the graph, the system can support 28 UEs in the reserved resources.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{fig12.png}}
@@ -735,7 +733,7 @@ Explicit feedback structure makes the UE retransmit data even if the gNB misses 
 
 An additional SR provides another mean for the gNB to identify the UE. It helps to reduce the probability of UE ID miss-detection. Nevertheless, if the actual number of repetitions are small as in in Table~\ref{tab8}, the miss-detection probability is still high compared to the case of full repetitions transmitted.
 
-The utilization of reserved resources always guarantee the number of repetitions so the target reliability is ensured. However, resource consumption is higher than other schemes.
+The utilization of reserved resources always guarantees the number of repetitions so the target reliability is ensured. However, resource consumption is higher than other schemes.
 
 The advantages and disadvantages of three proposed schemes are summarized in Table~\ref{tab9}.
 
@@ -874,7 +872,7 @@ This work was supported in part by TCL and H2020 project 5GENESIS (5genesis.eu).
 \end{thebibliography}
 
 
-\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{a1.PNG}}]{Trung-Kien Le} received M>S. degree specializing in Mobile Computing Systems from EURECOM, France. Currently, he is a PHD student in Sorbonne University and  EURECOM. His research interest is Ultra Reliable Low Latency Communication in 5G New Radio.
+\begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{a1.PNG}}]{Trung-Kien Le} received MCS. degree specializing in Mobile Computing Systems from EURECOM, France. Currently, he is a PHD student in Sorbonne University and  EURECOM. His research interest is Ultra Reliable Low Latency Communication in 5G New Radio.
 \end{IEEEbiography}
 
 \begin{IEEEbiography}[{\includegraphics[width=1in,height=1.25in,clip,keepaspectratio]{a2.png}}]{Umer Salim} received his Ph.D. and M.S. degrees, specializing in communication theory and signal processing from Eurecom and Supelec, France, respectively. He is currently working at TCL Communications as 5G Systems Architect and 3GPP RAN1 delegate for 5G standardization activity. Before joining TCL, he worked at Intel Mobile Communications designing modems for high end smart phones and tablets. He has several years of research experience in physical layer of wireless communications.
