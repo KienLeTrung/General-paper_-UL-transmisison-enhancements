@@ -4,6 +4,8 @@
 \usepackage{algorithmic}
 \usepackage{graphicx}
 \usepackage{textcomp}
+\usepackage{multirow}
+\usepackage{array}
 \def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
     T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
 \begin{document}
@@ -51,13 +53,13 @@ The third aspect is the standardization of the UL configured grant (CG) transmis
 
 A fourth aspect is the flexible configurable HARQ timing. Contrary to LTE 4 m-sec fixed duration between data transmission and its associated HARQ response, 5G allows flexible configuration of HARQ timing, even permitting the same slot HARQ response for some low latency applications.
 
-These new features have allowed achieving significantly large QoS requirements compared to what was possible with 4G. Yet, the URLLC applications described previously may still benefit with improved link performance. 3GPP Release-16, currently under standardization, is trying to make further progress on some important topics such as PDCCH reliability, PUSCH enhancements, eMBB and URLLC multiplexing, and UL CG enhancements etc. 
+These new features have allowed achieving significantly large quality of service (QoS) requirements compared to what was possible with 4G. Yet, the URLLC applications described previously may still benefit with improved link performance. 3GPP Release-16, currently under standardization, is trying to make further progress on some important topics such as PDCCH reliability, PUSCH enhancements, eMBB and URLLC multiplexing, and UL CG enhancements etc. 
 
 \subsection{Main contributions}
 
 This work contributes to solve two major problems relevant to URLLC, acknowledged by 3GPP. Section \ref{II} deals with the first problem of URLLC performance's deterioration in eMBB and URLLC multiplexing. The straight forward approach for the operators is to reserve bandwidths (BWs) (or parts of BWs) for different service types. This will lead to large degradation in spectral efficiency, making it important to multiplex different service types.  The first scenario of multiplexing between GB eMBB and CG URLLC is considered in \ref{IIB}. In the literature, some techniques have been proposed such as increasing power level of URLLC transmission, updating dynamically URLLC transmission parameters, making URLLC transmission wait until the next available CG regions, using cancellation indication (CI) and using successive interference cancellation (SIC) receiver. Each technique has its own disadvantages that will be discussed in detail in Section \ref{IIBN}. Section \ref{IIB2} and \ref{IIB3} summarize two techniques that we proposed in \cite{ad99}. The first technique uses an overlap indication and an explicit feedback structure. The second technique uses an overlap indication and an additional SR. These techniques reduce packet loss due to interference and Demodulation Reference Signal (DMRS) miss-detection. Subsequently, in Section \ref{IIA}, the paper extends the work in \cite{ad99} by analyzing and developing the techniques to solve the problems in the second scenario of the multiplexing between GB eMBB and GB URLLC UEs.  A bit flag is included in UL grants to specify the UEs that need to monitor CI on mini-slot level. The selection between group common (GC) CI and UE-specific CI is explained in the subsection about CI design. These techniques reduces energy consumption at the UEs and resource consumption in the system.
 
-Section \ref{III} copes with another important problem of URLLC related to CG transmissions. These UEs may be configured with CG transmissions frequently to avoid scheduling delays, and with multiple repetitions for the same transport block (TB) to ensure a certain reliability. As packet arrival at the UEs is not aligned to system timing, packets appearing in the middle of the interval will either have to wait for the next interval to transmit the configured number of repetitions or transmit fewer repetitions in the current interval. The former may be a problem for latency whereas the latter may lead to reliability issue. Some techniques have been proposed in the literature and 3GPP meetings such as using multiple configurations, allowing the repetitions to cross boundary of a HARQ process, and using shared resources for repetitions. The description and analysis of these techniques are written in Section \ref{IIIBN}. Subsequently, three different techniques to solve this problem or at least alleviate the harmful effect of a smaller number of repetitions transmitted that we proposed in \cite{b9} and \cite{ad100} are described and compared with each other. Some new developments are also shown in this part. The first technique in Section \ref{IIIB} uses reserved resources so that the UE can use them to transmit the repetitions until it reaches the configured number. The sizes of the reserved resources are optimized based on their positions. The second technique in Section \ref{IIIC} demands the UE to activate explicit HARQ feedback structure if it cannot do all repetitions as configured. This structure helps reduce the probability of packet loss due to DMRS miss-detection. The third technique in Section \ref{IIID} asks the UE to transmit an additional SR in case of a smaller number of repetitions transmitted. This SR provides another chance for the gNB to recognize UE appearance so that packet loss's probability decreases. 
+Section \ref{III} copes with another important problem of URLLC related to CG transmissions. These UEs may be configured with CG transmissions frequently to avoid scheduling delays, and with multiple repetitions for the same transport block (TB) to ensure a certain reliability. As packet arrival at the UEs is not aligned to system timing, packets appearing in the middle of the interval will either have to wait for the next interval to transmit the configured number of repetitions or transmit fewer repetitions in the current interval. The former may be a problem for latency whereas the latter may lead to reliability issue. Some techniques have been proposed in the literature and 3GPP meetings such as using multiple configurations, allowing the repetitions to cross boundary of a HARQ process, and using shared resources for repetitions. The description and analysis of these techniques are written in Section \ref{IIIBN}. Subsequently, three different techniques to solve this problem or at least alleviate the harmful effect of a smaller number of repetitions transmitted that we proposed in \cite{b9} and \cite{ad100} are described and compared with each other. Some new developments and the way to combine these technique to use at the same time are also shown in this part. The first technique in Section \ref{IIIB} uses reserved resources so that the UE can use them to transmit the repetitions until it reaches the configured number. The sizes of the reserved resources are optimized based on their positions. The further development of this scheme with SIC receiver is presented in this paper. The second technique in Section \ref{IIIC} demands the UE to activate explicit HARQ feedback structure if it cannot do all repetitions as configured. This structure helps reduce the probability of packet loss due to DMRS miss-detection. The third technique in Section \ref{IIID} asks the UE to transmit an additional SR in case of a smaller number of repetitions transmitted. This SR provides another chance for the gNB to recognize UE appearance so that packet loss's probability decreases. 
 
 \section{UL eMBB and URLLC multiplexing}\label{II}
 
@@ -67,6 +69,7 @@ In UL transmission, there are the cases that an UL transmission at the eMBB UE h
 \centerline{\includegraphics[scale=0.33]{fig21.PNG}}
 \caption{Two scenarios of collisions between the eMBB UEs and URLLC UEs.}
 \label{fig21}
+\vspace{-5mm}
 \end{figure}
 
 \subsection{GB eMBB and CG URLLC multiplexing}\label{IIB}
@@ -104,22 +107,21 @@ A SIC receiver in \cite{ref19} only benefits the eMBB UE. Because of latency req
 \begin{table*}[htbp]
 \caption{SR Transmission with TB and Actions for the gNB and the UE}
 \begin{center}
-\begin{tabular}{|p{1.5em}|p{10em}|p{9em}|p{16em}|p{9em}|p{9em}|}
+\begin{tabular}{|p{1.5em}|p{6em}|p{6em}|p{6em}|p{14em}|p{10em}|}
  \hline
- \textbf{Case} & \textbf{CG PUSCH} & \textbf{SR in PUCCH} & \textbf{gNB understanding} & \textbf{gNB action} & \textbf{UE action}\\ 
+ \textbf{Case} & \textbf{DMRS} & \textbf{TB} & \textbf{SR} & \textbf{gNB} & \textbf{UE}\\ 
  \hline
- 1 & Correctly decoded at the gNB & Correctly decoded at the gNB & The gNB knows that SR is for the decoded TB & Indicate a correct detection (ex: using UL grant with the same HARQ ID) & Discard data upon receiving the gNB indication\\
+ 1 & Detected & Decoded & Decoded & No action. Successful transmission & Discard TB in buffer\\
  \hline
- 2 &  Correctly decoded at the gNB & Incorrectly decoded at the gNB & The gNB upon correctly decoding the data and seeing less than K rep knows about missing SR. This case should be rare as SR is sent with strong coding & Indicate correct detection (ex: using UL grant with same HARQ ID) & Discard the data upon the gNB indication\\
+ 2 &  Detected & Decoded & Failed & No action. Successful transmission & Discard TB in buffer\\
 \hline
-3 & Incorrectly decoded at the gNB but UE Identified through DMRS & Correctly decoded at the gNB & the gNB understands that UE sent SR along with the TB that it failed to decode & The gNB sends the UL grant for re-transmission & The UE follows the UL grant for re-transmission\\
+3 & Detected & Failed & Decoded & Obtain UE ID from DMRS. Transmits the UL grant for retransmission & Retransmits TB\\
 \hline
-4 & Incorrectly decoded and UE Identification Failure at the gNB & Correctly decoded at the gNB & The gNB completely misses the CG transmission due to failure in UE identification but it receives SR. From the timing of SR and CG configurations, the gNB knows its decoding failure & The gNB sends the UL grant for transmission & The UE follows the UL grant for transmission and re-transmits the data\\
+4 & Failed & Not proceeded & Decoded & Obtain UE ID from SR. Transmits the UL grant for retransmission & Retransmits TB\\
 \hline
-5 & Incorrectly decoded at the gNB but UE Identified through DMRS & Incorrectly decoded at the gNB & The gNB identifies the UE from PUSCH. If it can identify the case of less than K repetitions, it knows also about SR detection failure & The gNB sends the UL grant for re-transmission & The UE follows the UL grant for re-transmission\\
+5 & Detected & Failed & Failed &  Obtain UE ID from DMRS. Transmits the UL grant for retransmission & Retransmits TB\\
 \hline
- 6 & Incorrectly decoded at the gNB and UE Identification Failure at the gNB & Incorrectly decoded at the gNB & The gNB has no indication about UE transmission & No action & The UE can be configured to
-retransmit in the subsequent CG resources or SR\\
+ 6 & Failed & Not proceeded & Failed & No action. TB lost & No action. TB lost\\
  
 
 %  increase row height, number of & = number of collumn
@@ -194,6 +196,8 @@ In this scheme, the UE sends the additional SR in the dedicated PUCCH resources 
 
 
 The second step using explicit ACK feedback in Section \ref{IIB2} and the second step using an additional SR in Section \ref{IIB3} can be used alternatively depending on the transmission condition. The gNB chooses between two options and informs the UE by 2-bit flag in the overlap indication. Each bit is used to activate or deactivate the corresponding option. The explicit ACK feedback structure might be chosen if the period among CG occasions is small and there is no available PUCCH resource to transmit an additional SR. On the other hand, the additional SR structure is chosen if the period among CG occasions is long and latency requirement may not be satisfied with an automatic retransmission in the CG resources. 
+
+As can be seen in Table~\ref{tab2}, the scheme with an additional SR brings benefit in case 4 when the gNB obtains the UE ID by decoding SR while failing to detect DMRS. Thereby, the gNB can sends an UL grant to reschedule a retransmission with the acquired UE ID to avoid packet loss as in the conventional scheme.  
 
 \subsubsection{Numerical results and performance evaluation}
 
@@ -360,7 +364,7 @@ If an eMBB UE receives a positive flag from the gNB in the UL grant, it will inc
 \centerline{\includegraphics[scale=0.3]{fig9.PNG}}
 \caption{SCS terminology.}
 \label{fig9}
-\vspace{-2mm}
+\vspace{-6mm}
 \end{figure}
 
 In 1 ms, the maximum number of slots are 8 slots with SCS of 120 kHz. If the UEs monitor DCI in slot level, they have 8 monitoring occasions. This means that the UEs are already capable of supporting 8 monitoring occasions with their current design. Therefore, it is proposed that the number of monitoring occasions are still kept the same at 8 occasions in 1 ms even if the value of SCS decreases after the eMBB UEs receive 1-bit flag in UL grant. This value allows the eMBB UEs to monitor CI in mini-slot level when a low SCS is used. Normally, with SCS 60 kHz, there are only 4 monitoring occasions in 1 ms. However, with this proposal, the number of occasions are doubled to 8. At this moment, the UEs monitor DCI in non-slot level at each interval of 0.125 ms. The impact of this proposal is even bigger for low SCS 15 kHz and 30 kHz. In general, when an eMBB UE is indicated to decode CI in sub-slot level, it can be configured to DCI periodicity going up to its highest capability sub-carrier spacing slot timing. 
@@ -437,7 +441,7 @@ In \cite{ref7}, 3GPP agreed that multiple configurations are used to enhance rel
 \end{figure}
 
 
-In \cite{ref8} and \cite{ref9}, the repetitions are allowed to cross the boundary of a periodicity. It requires lots of effort in standardization to avoid the confusion between HARQ IDs at the gNB such as a mechanism to communicate HARQ IDs to the gNB or different DMRS sequences in the repetitions.
+In \cite{ref8} and \cite{ref9}, the UE is able to transmit the repetitions across the consecutive HARQ interval. It requires lots of effort in standardization to avoid the confusion between HARQ IDs at the gNB such as a mechanism to communicate HARQ IDs to the gNB or different DMRS sequences in the repetitions.
 
 In \cite{ref10} and \cite{ref11}, the UEs transmits the repetitions in the shared resource. However, the constraint of HARQ process boundary is not considered. Moreover, the size of all resources for repetitions are the same. Both factors cause a degradation of reliability, latency and resource consumption.
 
@@ -445,7 +449,7 @@ In \cite{ref10} and \cite{ref11}, the UEs transmits the repetitions in the share
 
 \subsubsection {Reserved resources}
 
-For CG transmission, each interval is associated with a HARQ process and that's why a TB is not allowed to cross the boundary of an interval. The configured number of repetitions can be guaranteed by generating some transmission resources which are dedicated for the CG transmissions in case the repetitions can not be completed within the classic resources as we propose in \cite{b9}. The reserved resources are configured with the same period as CG occasions. These reserved resources are shared shared among the UEs following random access or group access, resulting in lower overhead of resource creation. If the UE reaches the boundary of a HARQ process while not carrying out $K$ repetitions, it will use the reserved resources configured in the next transmission interval (reserved for a different HARQ process) to continue to transmit until attaining $K$ repetitions as shown in Fig.~\ref{fig5}. The UE1 only can do 3 repetitions in the first period but continues to transmit 1 repetition remaining in the first reserved resource of the next period instead of stopping the transmission. The gNB will search the reserved resources to find the repetitions. Because the reserved resources are configured by the gNB, it can distinguish the repetitions in the CG and reserved resources. Therefore, the gNB only uses HARQ ID of repetitions in the CG resource for UL grant for a retransmission.
+For CG transmission, each interval is associated with a HARQ process and that's why a TB is not allowed to cross the boundary of an interval. The configured number of repetitions can be guaranteed by generating some transmission resources which are dedicated for the CG transmissions in case the repetitions can not be completed within the classic resources as we propose in \cite{b9}. The reserved resources are configured with the same period as CG occasions. These reserved resources are shared shared among the UEs following random access or group access, resulting in lower overhead of resource creation. If the UE reaches the boundary of a HARQ process while not carrying out $K$ repetitions, it will use the reserved resources configured in the next transmission interval (reserved for a different HARQ process) to continue to transmit until attaining $K$ repetitions as shown in Fig.~\ref{fig5}. Due to the boundary of the first period, the UE1 only transmits 3 repetitions but continues to transmit 1 repetition remaining in the first reserved resource of the next period instead of stopping the transmission. The gNB will search the reserved resources to find the repetitions. Because the reserved resources are configured by the gNB, it can distinguish the repetitions in the CG and reserved resources. Therefore, the gNB only uses HARQ ID of repetitions in the CG resource for UL grant for a retransmission.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.32]{fig5.PNG}}
@@ -535,7 +539,7 @@ P_{ci} = 1 - \left(\frac{M_{i}-1+e^{-\lambda(K-i)}}{M_{i}}\right)^{N-1},\label{e
 where
 $i \in [1, K-1]$ is index indicating the position of the reserved resource based on the position of transmission occasion in a period.
 
-From \eqref{eq9} with a set of parameters  $\lambda, N, K, i,$ and $P_{ci}$, the size of the reserved resources at any transmission occasion can be calculated. If $P_{ci}$ is set to have the same value in all the reserved resources, the trend of reserved resources' size in terms of their positions in a period is: $M_1 > M_2 > M_3 > ... > M_{K-1}$. The design of the reserved resources following this decreasing trend instead of using the same size for all of the reserved resource brings an efficiency of resource consumption because the size is optimized particularly for each reserved resource.
+According to \eqref{eq9}, if $P_{ci}$ is set to have the same value in all the reserved resources, the sizes of the reserved resources in an interval decrease from the first one to the last one: $M_1 > M_2 > M_3 > ... > M_{K-1}$. This means that the sizes of the reserved resources are optimized based on their positions. This optimization reduces resource consumption compared to using the same size for all reserved resources.
 
 \subsubsection{SIC receiver at the gNB}
 
@@ -599,7 +603,7 @@ Both two strategies in \ref{IIIC} and \ref{IIID} can be activated at the same ti
 
 \subsubsection{Optimal reserved resources}
 \paragraph{No SIC receiver at the gNB}\label{IVB1}
-In the first scenario, the set of the parameters is: $M_1=10, K=4, \lambda=1.25\times10^{-4}, P_{c1}=10^{-3}$.  This means that the UEs are configured to transmit 4 repetitions. The size of the first reserved resources is 10 blocks. The goal is to find the number of the UEs that the system can support with a collision probability in the reserved resource of 10\textsuperscript{-3}. The collision probability in terms of the number of the UEs sharing the reserved resources is illustrated in Fig.~\ref{fig12}. As can be seen in the graph, the system can support 28 UEs in the reserved resources.
+In the first scenario, the set of the parameters is: $M_1=10, K=4, \lambda=1.25\times10^{-4}, P_{c1}=10^{-3}$.  This means that the UEs are configured to transmit 4 repetitions. The size of the first reserved resources is 10 blocks. The goal is to find the maximum number of the UEs with a collision probability in the reserved resource of 10\textsuperscript{-3}. The collision probability with respect to the number of the UEs sharing the reserved resources is illustrated in Fig.~\ref{fig12}. As can be seen in the graph, the system can support 28 UEs in the first reserved resources.
 
 \begin{figure}[htbp]
 \centerline{\includegraphics[scale=0.35]{fig12.png}}
@@ -613,17 +617,18 @@ In the first scenario, the set of the parameters is: $M_1=10, K=4, \lambda=1.25\
 In \eqref{eq2}, it is mentioned that the UEs share not only the reserved resources but also the CG resources. 28 UEs are divided into the groups that the UEs in each group share the CG resources in one bandwidth. The collision probability calculated from \eqref{eq2} is set to be approximate to the target probability $P_{c1}=10^{-3}$. Therefore, 28 UEs are divided into 4 groups with 7 UEs in each group. $P_{c\_CG}$ in \eqref{eq2} is $7.5\times10^{-4}$.
 
 
-After finding the number of the UEs in the system, the next step is to find the optimal size of the second and the third resources with the same set of the parameters. Because 4 repetitions are configured, 3 reserved resources in 3 consecutive locations of the next period are required. Fig.~\ref{fig13} shows collision probability with respect to the size of the second reserved resource. The optimal size of the second reserved resource to achieve $P_{c1} = P_{c2} = 10^{-3}$ is 7 blocks.
+After finding the number of the UEs in the system, the next step is to find the optimal size of the second and the third resources with the same set of the parameters. Because 4 repetitions are configured, 3 reserved resources in 3 consecutive locations of the next period are required. The reserved resources' optimal sizes are shown in Table~\ref{tab3}.
+%Fig.~\ref{fig13} shows collision probability with respect to the size of the second reserved resource. The optimal size of the second reserved resource to achieve $P_{c1} = P_{c2} = 10^{-3}$ is 7 blocks.
 
-\begin{figure}[htbp]
-\centerline{\includegraphics[scale=0.35]{fig13.png}}
-\caption{Collision probability in the second reserved resource.}
-\vspace{-2mm}
-\label{fig13}
+%\begin{figure}[htbp]
+%\centerline{\includegraphics[scale=0.35]{fig13.png}}
+%\caption{Collision probability in the second reserved resource.}
+%\vspace{-2mm}
+%\label{fig13}
 
-\end{figure}
+%\end{figure}
 
-Resource consumption of the reserved resources is shown in Table~\ref{tab3}.
+
 
 \begin{table}[htbp]
 \caption{Sizes of the reserved resources with $K=4$ and random access}
@@ -691,7 +696,7 @@ The proposed scheme with optimal reserved resources guarantees reliability becau
 \vspace{-2mm}
 \end{figure}
 
-More comparisons of reserved resources' scheme with the conventional and other proposed schemes can be found in Table~\ref{tab6}, Table~\ref{tab7}, Table~\ref{tab8} and Table~\ref{tab9}.
+More comparisons of reserved resources' scheme with the conventional and other proposed schemes can be found in Table~\ref{tab8} and Table~\ref{tab9}.
 
 \paragraph{SIC receiver is equipped at the gNB}\label{IVB2}
 
@@ -717,94 +722,129 @@ Fig.~\ref{fig18} shows the error probability due to collision in the first reser
 
 \end{figure}
 
+\begin{table*}[htbp]
+\caption{Performance comparison of different schemes at $SNR = -5dB$ and $FAR = 0.001$}
+\begin{center}
+\begin{tabular}{|p{8em}|p{8em}|p{7em}|p{7em}|p{7em}|p{7em}|p{7em}|}
+ \hline
+ \textbf{Case}&\textbf{Scheme}&\textbf{Starting time offset (ms)}&\textbf{Number of repetitions}&\textbf{UE ID miss-detection probability}&\textbf{Number of retransmissions in UE ID miss-detection}&\textbf{Total UE ID miss-detection probability}\\
+ \hline
+ \multirow{5}{8em}{\centering {TB comes after the 1 \textsuperscript{st} CG occasion}} & Conventional transmission & $0$ & $3$ & $5.5\times10^{-5}$ & $0$ & $5.5\times10^{-5}$ \\\cline{2-7}
+ & Conventional transmission with the UE waiting the next period & $0.75$ &$1$ &$0.038$ &$0$ & $0.038$ \\\cline{2-7}
+ & Transmission with explicit feedback & $0$ &$3$ &$5.5\times10^{-5}$ &$0$ & $5.5\times10^{-5}$ \\\cline{2-7}
+ & Transmission with SR& $0$ &$3$ &$2.1\times10^{-6}$ &$0$ & $2.1\times10^{-6}$ \\\cline{2-7}
+   & Transmission with reserved resources& $0$ &$4$& $2.1\times10^{-6}$& $0$ & $2.1\times10^{-6}$ \\\cline{2-7}
+\hline
+  \multirow{5}{8em}{\centering {TB comes after the 2 \textsuperscript{nd} CG occasion}} & Conventional transmission & $0$ & $2$ & $10^{-3}$ & $0$ & $10^{-3}$ \\\cline{2-7}
+ & Conventional transmission with the UE waiting the next period & $0.5$ &$2$ &$10^{-3}$ &$0$ & $10^{-3}$ \\\cline{2-7}
+ & Transmission with explicit feedback & $0$ &$2$ &$10^{-3}$ &$1$ & $5.5\times10^{-5}$ \\\cline{2-7}
+ & Transmission with SR& $0$ &$2$ &$5.5\times10^{-5}$ &$0$ & $5.5\times10^{-5}$ \\\cline{2-7}
+   & Transmission with reserved resources& $0$ &$4$& $2.1\times10^{-6}$& $0$ & $2.1\times10^{-6}$ \\\cline{2-7}
+ \hline
+ \multirow{5}{8em}{\centering {TB comes after the 3 \textsuperscript{rd} CG occasion}} & Conventional transmission & $0$ & $1$ & $0.038$ & $0$ & $0.038$ \\\cline{2-7}
+ & Conventional transmission with the UE waiting the next period & $0.25$ &$3$ &$5.5\times10^{-5}$ &$0$ & $5.5\times10^{-5}$ \\\cline{2-7}
+ & Transmission with explicit feedback & $0$ &$1$ &$0.038$ &$2$ & $5.5\times10^{-5}$ \\\cline{2-7}
+ & Transmission with SR& $0$ &$1$ &$10^{-3}$ &$0$ & $10^{-3}$ \\\cline{2-7}
+   & Transmission with reserved resources& $0$ &$4$& $2.1\times10^{-6}$& $0$ & $2.1\times10^{-6}$ \\\cline{2-7}
+
+%  increase row height, number of & = number of collumn
+% &&&&&\\[-1em]
+ 
+ \hline
+\end{tabular}
+\label{tab8}
+\end{center}
+\vspace{-6mm}
+\end{table*}
+
 The performance of DMRS detection is simulated with the parameters in Table~\ref{tab5}. Fig.~\ref{fig15} shows simulation results with different FAR. 
 
 If the gNB cannot detect DMRS sequence, the packet is lost in the conventional feedback structure. It results in a degradation of UL transmission.
 
 In the simulation system, HARQ process has periodicity $P$ equal to 4 slots. With SCS of 60 kHz, 4 slots spread in 1 ms. The configured number of repetition are 4. 3GPP Release 15 standardized that each slot has only one repetition \cite{ref3}. Thereby, 4 repetitions are carried out in 4 slots equal to one HARQ process. The sum of gNB processing time, feedback transmission time, UE processing time is one slot. The UE waits after one slot to decide whether dropping or retransmitting data.
 
-Table~\ref{tab6}, Table~\ref{tab7} and Table~\ref{tab8} shows the performance of DMRS detection at SNR of -5dB and FAR of 0.001 in different schemes and arrival time of data. 
+Table~\ref{tab8} shows the performance of DMRS detection at SNR of -5dB and FAR of 0.001 in different schemes and arrival time of data. 
 
 As can be seen, due to the constraint of HARQ process boundary, the UE might not transmit all 4 repetitions as configured if data comes late. Less repetitions transmitted means that DMRS miss-detection at the gNB increases. It leads to an increase of packet loss because the packet is assumed to be successful in timer-based feedback structure.
 
 If the UE waits until the next HARQ process to transmit data, it might also not be able to do all the configured repetitions because of URLLC latency requirement.
 
-Explicit feedback structure makes the UE retransmit data even if the gNB misses DMRS. It increases DMRS detection's performance and reduces packet loss. However, in one scenario as shown in Table~\ref{tab6}, after discovering that there is no ACK or UL grant, the UE cannot retransmit data because latency budget of 1 ms is reached.
+Explicit feedback structure makes the UE retransmit data even if the gNB misses DMRS. It increases DMRS detection's performance and reduces packet loss. However, in one scenario as shown in Table~\ref{tab8}, after discovering that there is no ACK or UL grant, the UE cannot retransmit data because latency budget of 1 ms is reached.
 
-An additional SR provides another mean for the gNB to identify the UE. It helps to reduce the probability of UE ID miss-detection. Nevertheless, if the actual number of repetitions are small as in in Table~\ref{tab8}, the miss-detection probability is still high compared to the case of full repetitions transmitted.
+An additional SR helps to reduce the probability of UE ID miss-detection. Nevertheless, if the actual number of repetitions are small as in in Table~\ref{tab8}, the miss-detection probability is still high compared to the case of full repetitions transmitted.
 
 The utilization of reserved resources always guarantees the number of repetitions so the target reliability is ensured. However, resource consumption is higher than other schemes.
 
 The advantages and disadvantages of three proposed schemes are summarized in Table~\ref{tab9}.
 
-\begin{table}[htbp]
-\caption{Performance comparison of different schemes when data comes after the first occasion in a period at $SNR = -5dB$ and $FAR = 0.001$}
-\begin{center}
-\begin{tabular}{|p{6em}|p{3em}|p{3em}|p{3.2em}|p{3.2em}|p{3.2em}|}
- \hline
- \textbf{Case} & \textbf{Starting time offset (ms)}&\textbf{Number of repetitions}&\textbf{UE ID miss-detection probability}&\textbf{Retrans in ID miss-detection}&\textbf{Total UE ID miss-detection probability}\\
- \hline
- Conventional transmission&$0$&$3$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
- \hline
- Conventional transmission with the UE waiting the next period&$0.75$&$1$&$0.038$&$0$&$0.038$\\
- \hline
-Transmission with explicit ACK&$0$&$3$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
-\hline
-Transmission with SR&$0$&$3$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
- \hline
-Transmission with reserved resources&$0$&$4$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
- \hline
-\end{tabular}
-\label{tab6}
-\end{center}
+%\begin{table}[htbp]
+%\caption{Performance comparison of different schemes when data comes after the first occasion in a period at $SNR = -5dB$ and $FAR = 0.001$}
+%\begin{center}
+%\begin{tabular}{|p{6em}|p{3em}|p{3em}|p{3.2em}|p{3.2em}|p{3.2em}|}
+% \hline
+% \textbf{Case} & \textbf{Starting time offset (ms)}&\textbf{Number of repetitions}&\textbf{UE ID miss-detection probability}&\textbf{Retrans in ID miss-detection}&\textbf{Total UE ID miss-detection probability}\\
+% \hline
+% Conventional transmission&$0$&$3$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
+% \hline
+% Conventional transmission with the UE waiting the next period&$0.75$&$1$&$0.038$&$0$&$0.038$\\
+% \hline
+%Transmission with explicit ACK&$0$&$3$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
+%\hline
+%Transmission with SR&$0$&$3$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
+% \hline
+%Transmission with reserved resources&$0$&$4$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
+ %\hline
+%\end{tabular}
+%\label{tab6}
+%\end{center}
 
-\end{table}
+%\end{table}
 
-\begin{table}[htbp]
-\caption{Performance comparison of different schemes when data comes after the second occasion in a period at $SNR = -5dB$ and $FAR = 0.001$}
-\begin{center}
-\begin{tabular}{|p{6em}|p{3em}|p{3em}|p{3.2em}|p{3.2em}|p{3.2em}|}
- \hline
- \textbf{Case} & \textbf{Starting time offset (ms)}&\textbf{Number of repetitions}&\textbf{UE ID miss-detection probability}&\textbf{Retrans in ID miss-detection}&\textbf{Total UE ID miss-detection probability}\\
- \hline
- Conventional transmission&$0$&$2$&$10\textsuperscript{-3}$&$0$&$10\textsuperscript{-3}$\\
- \hline
- Conventional transmission with the UE waiting the next period&$0.5$&$2$&$10\textsuperscript{-3}$&$0$&$10\textsuperscript{-3}$\\
- \hline
-Transmission with explicit ACK&$0$&$2$&$10\textsuperscript{-3}$&$1$&$5.5\times10\textsuperscript{-5}$\\
-\hline
-Transmission with SR&$0$&$2$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
- \hline
- Transmission with reserved resources&$0$&$4$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
- \hline
-\end{tabular}
-\label{tab7}
-\end{center}
+%\begin{table}[htbp]
+%\caption{Performance comparison of different schemes when data comes after the second occasion in a period at $SNR = -5dB$ and $FAR = 0.001$}
+%\begin{center}
+%\begin{tabular}{|p{6em}|p{3em}|p{3em}|p{3.2em}|p{3.2em}|p{3.2em}|}
+% \hline
+% \textbf{Case} & \textbf{Starting time offset (ms)}&\textbf{Number of repetitions}&\textbf{UE ID miss-detection probability}&\textbf{Retrans in ID miss-detection}&\textbf{Total UE ID miss-detection probability}\\
+% \hline
+ %Conventional transmission&$0$&$2$&$10\textsuperscript{-3}$&$0$&$10\textsuperscript{-3}$\\
+ %\hline
+%Conventional transmission with the UE waiting the next period&$0.5$&$2$&$10\textsuperscript{-3}$&$0$&$10\textsuperscript{-3}$\\
+% \hline
+%Transmission with explicit ACK&$0$&$2$&$10\textsuperscript{-3}$&$1$&$5.5\times10\textsuperscript{-5}$\\
+%\hline
+%Transmission with SR&$0$&$2$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
+% \hline
+% Transmission with reserved resources&$0$&$4$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
+%\hline
+%\end{tabular}
+%\label{tab7}
+%\end{center}
 
-\end{table}
+%\end{table}
 
-\begin{table}[htbp]
-\caption{Performance comparison of different schemes when data comes after the third occasion in a period at $SNR = -5dB$ and $FAR = 0.001$}
-\begin{center}
-\begin{tabular}{|p{6em}|p{3em}|p{3em}|p{3.2em}|p{3.2em}|p{3.2em}|}
- \hline
- \textbf{Case} & \textbf{Starting time offset (ms)}&\textbf{Number of repetitions}&\textbf{UE ID miss-detection probability}&\textbf{Retrans in ID miss-detection}&\textbf{Total UE ID miss-detection probability}\\
- \hline
- Conventional transmission&$0$&$1$&$0.038$&$0$&$0.038$\\
- \hline
-  Conventional transmission with the UE waiting the next period&$0.25$&$3$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
- \hline
-Transmission with explicit ACK&$0$&$1$&$0.038$&$2$&$5.5\times10\textsuperscript{-5}$\\
-\hline
-Transmission with SR&$0$&$1$&$10\textsuperscript{-3}$&$0$&$10\textsuperscript{-3}$\\
- \hline
- Transmission with reserved resources&$0$&$4$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
- \hline
-\end{tabular}
-\label{tab8}
-\end{center}
+%\begin{table}[htbp]
+%\caption{Performance comparison of different schemes when data comes after the third occasion in a period at $SNR = -5dB$ and $FAR = 0.001$}
+%\begin{center}
+%\begin{tabular}{|p{6em}|p{3em}|p{3em}|p{3.2em}|p{3.2em}|p{3.2em}|}
+% \hline
+ %\textbf{Case} & \textbf{Starting time offset (ms)}&\textbf{Number of repetitions}&\textbf{UE ID miss-detection probability}&\textbf{Retrans in ID miss-detection}&\textbf{Total UE ID miss-detection probability}\\
+% \hline
+% Conventional transmission&$0$&$1$&$0.038$&$0$&$0.038$\\
+ %\hline
+%  Conventional transmission with the UE waiting the next period&$0.25$&$3$&$5.5\times10\textsuperscript{-5}$&$0$&$5.5\times10\textsuperscript{-5}$\\
+% \hline
+%Transmission with explicit ACK&$0$&$1$&$0.038$&$2$&$5.5\times10\textsuperscript{-5}$\\
+%\hline
+%Transmission with SR&$0$&$1$&$10\textsuperscript{-3}$&$0$&$10\textsuperscript{-3}$\\
+% \hline
+% Transmission with reserved resources&$0$&$4$&$2.1\times10\textsuperscript{-6}$&$0$&$2.1\times10\textsuperscript{-6}$\\
+% \hline
+%\end{tabular}
+%\label{tab8}
+%\end{center}
 
-\end{table}
+%\end{table}
 
 
 \begin{table}[htbp]
@@ -829,6 +869,11 @@ Additional SR&+ Enhance UE ID detection&+ Resource consumption of SR\\& &  + Hig
 \end{center}
 \vspace{-6mm}
 \end{table}
+
+
+
+
+
 
 \section{Conclusion}
 
