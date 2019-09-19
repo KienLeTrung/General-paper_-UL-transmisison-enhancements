@@ -105,7 +105,7 @@ A SIC receiver in \cite{ref19} only benefits the eMBB UE. Because of latency req
 \subsubsection{Overlap indication and explicit HARQ ACK feedback structure}\label{IIB2}
 
 \begin{table*}[htbp]
-\caption{SR Transmission with TB and Actions for the gNB and the UE}
+\caption{The gNB and the UE's operation in the UL CG transmission with an additional SR}
 \begin{center}
 \begin{tabular}{|p{1.5em}|p{6em}|p{6em}|p{6em}|p{14em}|p{10em}|}
  \hline
@@ -469,9 +469,7 @@ For CG transmission, each interval is associated with a HARQ process and that's 
 
 
 
-In Fig.~\ref{fig6}, there are $N$ UEs configured to transmit $K$ repetitions in the contiguous CG resources. The CG resources in one frequency band can be shared among the UEs in a group. A HARQ process with time interval $P$ contains $K$ CG transmission occasions. The results derived below are also valid if the number of CG transmission occasions in an interval $P$ are bigger than $K$. $K-1$ reserved resources are configured with the same period as the CG resources in each period $P$. All $N$ UEs can use the reserved resources to attain the configured number of repetitions. Each reserved resource has size of $M_{i}$ blocks where each block has the size of CG resource in one transmission occasion with index $i$ indicating that the reserved resource is at the $i$th transmission occasion of a period. 
-
-The arrival of data for each UE follows a Poisson process with the average number of random access events in an interval $\lambda$ calculated from the period between the CG resources $T$ and an average packet inter-arrival time $\mu$: $\lambda$ = $T/\mu$.
+In Fig.~\ref{fig6}, there are $N$ UEs configured to transmit $K$ repetitions in the contiguous CG resources. The CG resources in one frequency band can be shared among the UEs in a group. A HARQ process with time interval $P$ contains $K$ CG transmission occasions. The results derived below are also valid if the number of CG transmission occasions in an interval $P$ are bigger than $K$. $K-1$ reserved resources are configured with the same period as the CG resources in each period $P$. All $N$ UEs can use the reserved resources to attain the configured number of repetitions. The reserved resource at the $i$th transmission occasion in a period has $M_{i}$ blocks where each block has the size of CG resource in one transmission occasion. Packet arrival follows a Poisson process. In an interval of $T$ between two consecutive CG resources, there are $\lambda$ packets arriving at a UE.
 
 \subsubsection{Collision probability in reserved resources}\label{IIIB3}
 
